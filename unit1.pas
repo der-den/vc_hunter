@@ -23,7 +23,6 @@ type
   TForm1 = class(TForm)
     Button_scanDirectory: TButton;
     Button_cancelSearch: TButton;
-    CheckBox_onHeaderIgnoreList: TCheckBoxThemed;
     CheckBox_onSignatureList: TCheckBoxThemed;
     CheckBox_skipMod512odd: TCheckBox;
     FloatSpinEdit_se_limit: TFloatSpinEdit;
@@ -36,7 +35,6 @@ type
     ListView: TListView;
     MenuItem_ShowInHexViewer: TMenuItem;
     MenuItem_SaveListToTSV: TMenuItem;
-    MenuItem_AddHeaderToIgnore: TMenuItem;
     MenuItem_OpenPath: TMenuItem;
     MenuItem_CopyHeader: TMenuItem;
     MenuItem_separator1: TMenuItem;
@@ -57,11 +55,9 @@ type
     SpinEdit1: TSpinEdit;
     StatusBar: TStatusBar;
     procedure Button_cancelSearchClick(Sender: TObject);
-    procedure CheckBox_onHeaderIgnoreListChange(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure ListViewColumnClick(Sender: TObject; Column: TListColumn);
-    procedure MenuItem_AddHeaderToIgnoreClick(Sender: TObject);
     procedure MenuItem_CalcMD5AllFilesClick(Sender: TObject);
     procedure MenuItem_CalcMD5selectedClick(Sender: TObject);
     procedure MenuItem_clearListClick(Sender: TObject);
@@ -75,7 +71,6 @@ type
     procedure scanDirectory(Sender: TObject);
     procedure SortListView(Lv:TListView; Index:integer);
     function calcByteDivAndShannonEntropyFromFile(f:string):TRes;
-    function checkHeaderInIgnoreList(r:string):boolean;
   private
 
   public
@@ -87,7 +82,6 @@ var
   cancelSearch : Boolean;
   searchRunning : Boolean;
   showDebug  : Boolean;
-  headerIgnoreList : TStringList;
   starttimer : Int64;
   ScanTime : Int64;
 
@@ -109,17 +103,11 @@ begin
      ListView.Align  := AlClient;
   end;
 
- headerIgnoreList := TStringList.Create();
- headerIgnoreList.Sorted:=true;
- if (FileExists('header-ignore.txt')) then
- begin
-    headerIgnoreList.LoadFromFile('header-ignore.txt');
- end;
 end;
 
 procedure TForm1.FormDestroy(Sender: TObject);
 begin
-  headerIgnoreList.free;
+
 end;
 
 
@@ -195,12 +183,6 @@ begin
               begin
                 inc(skipped);
                 Continue;
-              end;
-
-              if( (CheckBox_onHeaderIgnoreList.Checked) AND ( checkHeaderInIgnoreList(r.headerString) = true ) ) then
-              begin
-                   inc(skipped);
-                   Continue;
               end;
 
               // okay, no more skipping features, add to list:
@@ -337,11 +319,6 @@ begin
   cancelSearch := true;
 end;
 
-procedure TForm1.CheckBox_onHeaderIgnoreListChange(Sender: TObject);
-begin
-
-end;
-
 
 procedure TForm1.ListViewColumnClick(Sender: TObject; Column: TListColumn);
 begin
@@ -349,18 +326,6 @@ begin
   SortListView(ListView,Column.Index);
 end;
 
-procedure TForm1.MenuItem_AddHeaderToIgnoreClick(Sender: TObject);
-var
-  Item: TListItem;
-begin
-  if( ListView.Selected <> nil ) then
-  begin
-    Item := ListView.Selected;
-    DeleteFile('header-ignore.txt');
-    headerIgnoreList.Add(Item.SubItems[4]);
-    headerIgnoreList.SaveToFile('header-ignore.txt');
-  end;
-end;
 
 procedure TForm1.MenuItem_CalcMD5AllFilesClick(Sender: TObject);
 var
@@ -401,18 +366,6 @@ begin
   sl.free;
 end;
 
-
-function TForm1.checkHeaderInIgnoreList(r:String):boolean;
-begin
-  Result := false;
-  if ( headerIgnoreList.Count > 0 ) then
-  begin
-     if (headerIgnoreList.IndexOf(r) > -1) then begin
-        Result := true;
-     end;
-  end;
-
-end;
 
 function TForm1.calcByteDivAndShannonEntropyFromFile(f:string):TRes;
 const
