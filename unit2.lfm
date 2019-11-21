@@ -1,0 +1,44 @@
+object Form2: TForm2
+  Left = 672
+  Height = 478
+  Top = 401
+  Width = 666
+  BorderIcons = [biSystemMenu]
+  BorderStyle = bsSingle
+  Caption = 'HexView'
+  ClientHeight = 478
+  ClientWidth = 666
+  OnActivate = FormActivate
+  OnCreate = FormCreate
+  ShowInTaskBar = stNever
+  LCLVersion = '2.0.2.0'
+  object ATBinHex1: TATBinHex
+    Cursor = crIBeam
+    Left = 0
+    Height = 455
+    Top = 0
+    Width = 666
+    Align = alClient
+    BorderStyle = bsSingle
+    Color = clWindow
+    Font.Color = clBlack
+    Font.Height = -12
+    Font.Name = 'Courier New'
+    ParentColor = False
+    TabOrder = 0
+    FontFooter.Color = clBlack
+    FontFooter.Height = -12
+    FontFooter.Name = 'Arial'
+    FontGutter.Color = clBlack
+    FontGutter.Height = -12
+    FontGutter.Name = 'Courier New'
+    OnClickURL = ATBinHex1ClickURL
+  end
+  object StatusBar: TStatusBar
+    Left = 0
+    Height = 23
+    Top = 455
+    Width = 666
+    Panels = <>
+  end
+end

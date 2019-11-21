@@ -1,0 +1,295 @@
+object Form1: TForm1
+  Left = 413
+  Height = 562
+  Top = 141
+  Width = 938
+  Caption = 'VC Hunter'
+  ClientHeight = 562
+  ClientWidth = 938
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  LCLVersion = '2.0.2.0'
+  object ListView: TListView
+    Left = 0
+    Height = 400
+    Top = 64
+    Width = 938
+    Align = alTop
+    Columns = <    
+      item
+        AutoSize = True
+        Caption = 'Path'
+        MinWidth = 100
+        Width = 39
+      end    
+      item
+        Caption = 'Filename'
+        MinWidth = 40
+        Width = 160
+      end    
+      item
+        Alignment = taRightJustify
+        Caption = 'Filesize'
+        MaxWidth = 400
+        MinWidth = 50
+        Width = 120
+      end    
+      item
+        Alignment = taRightJustify
+        Caption = 'Byte difference'
+        MinWidth = 100
+        Width = 120
+      end    
+      item
+        Alignment = taRightJustify
+        Caption = 'Shannon entropy'
+        Width = 120
+      end    
+      item
+        Alignment = taRightJustify
+        Caption = 'ASCII-Header'
+        Width = 130
+      end    
+      item
+        AutoSize = True
+        Caption = 'Hash'
+        Visible = False
+        Width = 120
+      end>
+    GridLines = True
+    PopupMenu = PopupMenu_ListView
+    ReadOnly = True
+    RowSelect = True
+    TabOrder = 0
+    ViewStyle = vsReport
+    OnColumnClick = ListViewColumnClick
+  end
+  object StatusBar: TStatusBar
+    Left = 0
+    Height = 23
+    Top = 539
+    Width = 938
+    Panels = <>
+    SimpleText = ' Freeware by d-forensik.de'
+  end
+  object Panel1: TPanel
+    Left = 0
+    Height = 64
+    Top = 0
+    Width = 938
+    Align = alTop
+    ClientHeight = 64
+    ClientWidth = 938
+    TabOrder = 2
+    object CheckBox_skipMod512odd: TCheckBox
+      Left = 369
+      Height = 19
+      Top = 8
+      Width = 98
+      Anchors = [akTop, akRight]
+      Caption = 'mod512 is odd'
+      Checked = True
+      State = cbChecked
+      TabOrder = 0
+    end
+    object FloatSpinEdit_se_limit: TFloatSpinEdit
+      Left = 868
+      Height = 23
+      Top = 32
+      Width = 54
+      Anchors = [akTop, akRight]
+      DecimalPlaces = 1
+      Increment = 0.1
+      MaxValue = 7.9
+      MinValue = 0.5
+      TabOrder = 1
+      Value = 7.8
+    end
+    object SpinEdit1: TSpinEdit
+      Left = 868
+      Height = 23
+      Top = 8
+      Width = 54
+      Anchors = [akTop, akRight]
+      MaxValue = 1000
+      MinValue = 1
+      TabOrder = 2
+      Value = 160
+    end
+    object Label1: TLabel
+      Left = 288
+      Height = 15
+      Top = 8
+      Width = 59
+      Anchors = [akTop, akRight]
+      Caption = 'Skip files ..'
+      Font.Style = [fsBold]
+      ParentColor = False
+      ParentFont = False
+    end
+    object Label2: TLabel
+      Left = 810
+      Height = 15
+      Top = 36
+      Width = 55
+      Anchors = [akTop, akRight]
+      Caption = 'Entropy < '
+      ParentColor = False
+    end
+    object Label3: TLabel
+      Left = 772
+      Height = 15
+      Top = 12
+      Width = 93
+      Anchors = [akTop, akRight]
+      Caption = 'Byte difference > '
+      ParentColor = False
+    end
+    object Button_cancelSearch: TButton
+      Left = 16
+      Height = 30
+      Top = 8
+      Width = 91
+      Cancel = True
+      Caption = 'Cancel search'
+      Font.Style = [fsBold]
+      OnClick = Button_cancelSearchClick
+      ParentFont = False
+      TabOrder = 3
+      TabStop = False
+      Visible = False
+    end
+    object Button_scanDirectory: TButton
+      Left = 24
+      Height = 30
+      Top = 8
+      Width = 216
+      Caption = 'Scan directory'
+      Font.Style = [fsBold]
+      OnClick = scanDirectory
+      ParentFont = False
+      TabOrder = 4
+      TabStop = False
+    end
+    object CheckBox_onHeaderIgnoreList: TCheckBoxThemed
+      Left = 484
+      Height = 19
+      Top = 8
+      Width = 128
+      Anchors = [akTop, akRight]
+      Caption = 'on header ignore list'
+      TabOrder = 5
+      OnChange = CheckBox_onHeaderIgnoreListChange
+    end
+    object Label4: TLabel
+      Left = 369
+      Height = 15
+      Top = 40
+      Width = 197
+      Anchors = [akTop, akRight]
+      Caption = 'Filesize under 4kb are always skipped!'
+      ParentColor = False
+    end
+    object Label5: TLabel
+      Left = 412
+      Height = 1
+      Top = 36
+      Width = 1
+      ParentColor = False
+    end
+    object CheckBox_onSignatureList: TCheckBoxThemed
+      Left = 624
+      Height = 19
+      Top = 8
+      Width = 108
+      Anchors = [akTop, akRight]
+      Caption = 'on Signature List'
+      TabOrder = 6
+      OnChange = CheckBox_onHeaderIgnoreListChange
+    end
+  end
+  object ListBox: TListBox
+    Left = 0
+    Height = 75
+    Top = 464
+    Width = 938
+    Align = alClient
+    ItemHeight = 0
+    TabOrder = 3
+  end
+  object OpenDialog1: TOpenDialog
+    left = 120
+    top = 72
+  end
+  object SelectDirectoryDialog1: TSelectDirectoryDialog
+    left = 56
+    top = 80
+  end
+  object PopupMenu_ListView: TPopupMenu
+    left = 250
+    top = 120
+    object MenuItem_OpenPath: TMenuItem
+      Caption = 'Open path'
+      OnClick = MenuItem_OpenPathClick
+    end
+    object MenuItem_cpToclipboard: TMenuItem
+      Caption = 'Copy to Clipboard'
+      object MenuItem_CopyFilename: TMenuItem
+        Caption = 'Filename'
+        OnClick = MenuItem_CopyFilenameClick
+      end
+      object MenuItem_CopyPathAndFilename: TMenuItem
+        Caption = 'Path with Filename'
+        OnClick = MenuItem_CopyPathAndFilenameClick
+      end
+      object MenuItem_CopyPath: TMenuItem
+        Caption = 'Path'
+        OnClick = MenuItem_CopyPathClick
+      end
+      object MenuItem_CopyHeader: TMenuItem
+        Caption = 'Header'
+        OnClick = MenuItem_CopyHeaderClick
+      end
+    end
+    object MenuItem_AddHeaderToIgnore: TMenuItem
+      Caption = 'Add header to ignore list'
+      OnClick = MenuItem_AddHeaderToIgnoreClick
+    end
+    object MenuItem6: TMenuItem
+      Caption = 'Calculating MD5 Hash..'
+      object MenuItem_CalcMD5selected: TMenuItem
+        Caption = 'for selected file'
+        OnClick = MenuItem_CalcMD5selectedClick
+      end
+      object MenuItem_CalcMD5AllFiles: TMenuItem
+        Caption = 'for all files'
+        OnClick = MenuItem_CalcMD5AllFilesClick
+      end
+    end
+    object MenuItem_ShowInHexViewer: TMenuItem
+      Caption = 'Show in Hex Viewer'
+      OnClick = MenuItem_ShowInHexViewerClick
+    end
+    object MenuItem5: TMenuItem
+      Caption = 'Save file to..'
+      Enabled = False
+      Visible = False
+    end
+    object MenuItem_SaveListToTSV: TMenuItem
+      Caption = 'Save current list to TSV'
+      OnClick = MenuItem_SaveListToTSVClick
+    end
+    object MenuItem_separator1: TMenuItem
+      Enabled = False
+    end
+    object MenuItem_clearList: TMenuItem
+      Caption = 'Clear list'
+      OnClick = MenuItem_clearListClick
+    end
+  end
+  object SaveDialog: TSaveDialog
+    Options = [ofCreatePrompt, ofEnableSizing, ofViewDetail]
+    left = 111
+    top = 158
+  end
+end
