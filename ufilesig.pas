@@ -270,7 +270,28 @@ begin
   end;
 end;
 
-function TestFile(aFilename: string): boolean;
+function TestFile(aFilename: string):string;
+var
+  r : string[20];
+begin
+  r := TestFileSigVsExtension(aFilename);
+  case r of
+       'ext-not-in-list': begin
+
+       end;
+
+       'ext-not-match-sig': begin
+
+       end;
+
+       'ext-match-sig': begin
+          result := r;
+       end;
+  end;
+
+end;
+
+function TestFileSigVsExtension(aFilename: string): string;
 var
   vExtension : string;
   vIndex : integer;
@@ -319,15 +340,20 @@ begin
 
       if (vBytesCount = vBytesRead) and CompareMem(@vReadbuffer[0],@vExtensionSigMime.Sigs[i].Signature[0],vBytesRead) then
       begin
-        result := true;
+        result := 'ext-match-sig';
         fs.free;
         exit;
-      end;
+      end else result := 'ext-not-match-sig';
     end;
     fs.free;
-  end;
+  end else result:='ext-not-in-list';
 
-  result := false;
+end;
+
+function TestFileSigOnly(aFilename:string):string;
+var
+begin
+
 end;
 
 function ExtraktExpresion(var Data: String; Delimiter : tDelimiter = [';'] ): string;
