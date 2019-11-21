@@ -170,7 +170,7 @@ begin
                  Continue;
               end;
               }
-              if CheckBox_skipMod512odd.Checked AND odd(FileSize(AllFiles[i]) mod 512) then         // skip mod512 is odd
+              if CheckBox_skipMod512odd.Checked AND ((FileSize(AllFiles[i]) mod 512) <> 0) then         // skip mod512 <> 0
               begin
                  inc(skipped);
                  Continue;
@@ -219,6 +219,8 @@ begin
 //        StatusBar.SimpleText:='';
       finally
       end;
+      StatusBar.SimpleText:=' Total: '+IntToStr(AllFiles.Count)+', Processed: '+IntToStr(i+1)+', Skipped: '+IntToStr(skipped) + ', Time: ' +Inttostr(gettickcount - starttimer) + ' ms';
+      Application.ProcessMessages;
       Button_cancelSearch.Visible:=false;
       Button_scanDirectory.Visible:=true;
       searchRunning:=false;
