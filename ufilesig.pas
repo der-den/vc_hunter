@@ -45,7 +45,9 @@ type
 
  function ExtraktExpresion(var Data: String; Delimiter : tDelimiter = [';'] ): string;
  function ExtraktString(var Data: String): string;
- function TestFile(aFilename :string) : boolean;
+ function TestFile(aFilename :string) : string;
+ function TestFileSigVsExtension(aFilename :string) : string;
+ function TestFileSigOnly(aFilename:string):string;
 
  implementation
  var
@@ -315,7 +317,7 @@ begin
     except
       On E : Exception do
       begin
-        result := false;
+        result := 'open-failed';
         exit;
       end;
     end;
@@ -351,7 +353,7 @@ begin
 end;
 
 function TestFileSigOnly(aFilename:string):string;
-var
+
 begin
 
 end;
