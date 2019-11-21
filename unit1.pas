@@ -159,7 +159,7 @@ begin
            begin
               if ( i mod 10 = 0 ) then begin
 
-               StatusBar.SimpleText:=' Total: '+IntToStr(AllFiles.Count-1)+', Processed: '+IntToStr(i)+', Skipped: '+IntToStr(skipped) + ', Time: ' +Inttostr(gettickcount - starttimer) + ' ms';
+               StatusBar.SimpleText:=' Total: '+IntToStr(AllFiles.Count)+', Processed: '+IntToStr(i+1)+', Skipped: '+IntToStr(skipped) + ', Time: ' +Inttostr(gettickcount - starttimer) + ' ms';
                Application.ProcessMessages;
               end;
 
