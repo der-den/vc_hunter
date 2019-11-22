@@ -33,10 +33,11 @@ type
  { TExtensionsList }
 
  TExtensionsList = class(TObject)
-
+   procedure SortAllsignatures();
 
  public
    fList : tstringlist;
+   fSignaltureMaxlen : integer;
    fAllsignatures : array of tSigs;
    constructor Create;
    destructor Destroy; override;
@@ -110,21 +111,58 @@ end;
 
  { TExtensionsList }
 
+ procedure TExtensionsList.SortAllsignatures();
+ var
+   i: Integer;
+   temp: Integer;
+   done: Boolean;
+   vSig : tSigs;
+ begin
+   repeat
+     done := True;
+     for i := Low(fAllsignatures) to High(fAllsignatures) - 1 do
+     begin
+       if fAllsignatures[i].Offset > fAllsignatures[i + 1].Offset then
+       begin
+         //temp := A[i];
+         vSig.Offset := fAllsignatures[i].Offset;
+         setlength(vSig.Signature,length(fAllsignatures[i].Signature));
+         Move(fAllsignatures[i].Signature[0],vSig.Signature[0],length(vSig.Signature));
+         //A[i] := A[i + 1];
+         fAllsignatures[i].Offset := fAllsignatures[i+1].Offset;
+         setlength(fAllsignatures[i].Signature,length(fAllsignatures[i+1].Signature));
+         Move(fAllsignatures[i+1].Signature[0],fAllsignatures[i].Signature[0],length(fAllsignatures[i].Signature));
+         //A[i + 1] := temp;
+         fAllsignatures[i+1].Offset := vSig.Offset;
+         setlength(fAllsignatures[i+1].Signature,length(vSig.Signature));
+         Move(vSig.Signature[0],fAllsignatures[i+1].Signature[0],length(fAllsignatures[i+1].Signature));
+
+         done := False;
+       end;
+     end;
+   until done;
+ end;
+
  constructor TExtensionsList.Create;
  var
    i,j : integer;
    vExtensionSigMime : TExtensionSigMime;
  begin
    inherited create;
+   fSignaltureMaxlen := 0;
    fList := tstringlist.create;
    LoadFromJSON('extensions.json');
    for i := 0 to fList.count-1  do
    begin
      vExtensionSigMime  :=  fList.Objects[i] as TExtensionSigMime;
      for j := 0 to length(vExtensionSigMime.Sigs) - 1 do
+     begin
        AddToAllsignatures(vExtensionSigMime.Sigs[j]);
+       if fSignaltureMaxlen < length(vExtensionSigMime.Sigs[j].Signature) then
+         fSignaltureMaxlen := length(vExtensionSigMime.Sigs[j].Signature);
+     end;
    end;
-
+   SortAllsignatures();
    SavetoFile('debug.txt');
  end;
 
@@ -246,19 +284,12 @@ end;
          vObjekt.Mime := vName;
          vEntityName := '';
        end;
-
      end;
-
-
-
    end;
    JSONText.Free;
-
-
-
  end;
 
- procedure TExtensionsList.SavetoFile(aFilename: string);
+ procedure TExtensionsList.SavetoFile(aFilename: string);   // Debug output
  var
    i,j : integer;
    output : tstringlist;
@@ -270,9 +301,6 @@ end;
      output.Add((fList.Objects[i] as TExtensionSigMime).Name);
      output.Add((fList.Objects[i] as TExtensionSigMime).Mime);
      output.AddStrings((fList.Objects[i] as TExtensionSigMime).Signatures);
-
-
-
    end;
 
    for i := 0 to length(fAllsignatures)-1  do
@@ -283,8 +311,6 @@ end;
      end;
      output.Add(inttostr(fAllsignatures[i].Offset) + ',' + sigstr);
    end;
-
-
   output.SaveToFile(aFilename);
   output.free;
  end;
@@ -304,6 +330,7 @@ var
   r : string[20];
 begin
   r := TestFileSigVsExtension(aFilename);
+
   case r of
        'ext-not-in-list': begin
           result := r;
@@ -318,6 +345,20 @@ begin
        end;
   end;
 
+  r := TestFileSigOnly(aFilename);
+   case r of
+       'ext-not-in-list': begin
+          result := r;
+       end;
+
+       'ext-not-match-sig': begin
+          result := r;
+       end;
+
+       'ext-match-sig': begin
+          result := r;
+       end;
+  end;
 end;
 
 function TestFileSigVsExtension(aFilename: string): string;
@@ -356,16 +397,6 @@ begin
       if vBytesCount > 255 then
         vBytesCount := 255;
       vBytesRead := fs.Read(vReadbuffer,vBytesCount);
-      {
-      vComparedBytes := 0;
-      for j := 0 to vBytesRead - 1 do
-      begin
-        if vReadbuffer[j] <> vExtensionSigMime.Sigs[i].Signature[j] then
-          break;
-        vComparedBytes := j+1;
-      end;
-      if vComparedBytes = vBytesCount then
-      }
 
       if (vBytesCount = vBytesRead) and CompareMem(@vReadbuffer[0],@vExtensionSigMime.Sigs[i].Signature[0],vBytesRead) then
       begin
@@ -380,9 +411,44 @@ begin
 end;
 
 function TestFileSigOnly(aFilename:string):string;
-
+var
+  i : integer;
+  vReadbuffer : array [0..255] of byte;
+  vOffset : integer;
+  vBytesRead : integer;
+  vLen : Integer;
+  fs : TFilestream;
 begin
+  try
+    fs := TFileStream.Create(aFilename, fmOpenRead or fmShareDenyWrite);                // open file for read
+  except
+    On E : Exception do
+    begin
+      result := 'open-failed';
+      exit;
+    end;
+  end;
 
+  vOffset := -1;
+  for i := 0 to length(ExtensionsList.fAllsignatures) - 1 do
+  begin
+    if ExtensionsList.fAllsignatures[i].Offset > vOffset then
+    begin
+      vOffset := ExtensionsList.fAllsignatures[i].Offset;
+      fs.Position := vOffset;
+      vBytesRead := fs.Read(vReadbuffer,255);
+    end;
+    vLen := length(ExtensionsList.fAllsignatures[i].Signature);
+
+    if (vBytesRead >= vLen) and CompareMem(@vReadbuffer[0],@ExtensionsList.fAllsignatures[i].Signature[0],vLen) then
+    begin
+      result := 'match-sig';
+      fs.free;
+      exit;
+    end;
+  end;
+  fs.free;
+  result:='not-match-sig';
 end;
 
 procedure TExtensionsList.AddToAllsignatures(aSig: tSigs);
@@ -390,14 +456,13 @@ var
   i : integer;
 begin
   for i := 0 to length(fAllsignatures) - 1 do begin
-    if (fAllsignatures[i].Offset = aSig.Offset) and (fAllsignatures[i].Signature = aSig.Signature) then
+    if (fAllsignatures[i].Offset = aSig.Offset) and CompareMem(@fAllsignatures[i].Signature[0],@aSig.Signature[0],length(aSig.Signature)) then
       Exit;
   end;
   setlength(fAllsignatures,length(fAllsignatures)+1);
   fAllsignatures[length(fAllsignatures)-1].Offset := aSig.Offset;
   setlength(fAllsignatures[length(fAllsignatures)-1].Signature,length(aSig.Signature));
   Move(aSig.Signature[0],fAllsignatures[length(fAllsignatures)-1].Signature[0],length(aSig.Signature));
-
 end;
 
 function ExtraktExpresion(var Data: String; Delimiter : tDelimiter = [';'] ): string;
