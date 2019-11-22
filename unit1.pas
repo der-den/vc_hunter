@@ -179,7 +179,7 @@ begin
                  Continue;
               end;
 
-              if CheckBox_onSignatureList.Checked and TestFile(AllFiles[i]) then
+              if CheckBox_onSignatureList.Checked and (TestFile(AllFiles[i]) = 'ext-match-sig' )then
               begin
                 inc(skipped);
                 Continue;

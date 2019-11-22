@@ -16,6 +16,7 @@ type
 
  end;
 
+
  { TExtensionSigMime }
 
  TExtensionSigMime = class(TObject)
@@ -36,11 +37,13 @@ type
 
  public
    fList : tstringlist;
+   fAllsignatures : array of tSigs;
    constructor Create;
    destructor Destroy; override;
    procedure FreeList;
    procedure LoadFromJSON(aFilename :string);
    procedure SavetoFile(aFilename :string);
+   procedure AddToAllsignatures(aSig : tSigs);
  end;
 
  function ExtraktExpresion(var Data: String; Delimiter : tDelimiter = [';'] ): string;
@@ -49,9 +52,11 @@ type
  function TestFileSigVsExtension(aFilename :string) : string;
  function TestFileSigOnly(aFilename:string):string;
 
+
  implementation
  var
     ExtensionsList  : TExtensionsList;
+
 
  { TExtensionSigMime }
 
@@ -106,10 +111,20 @@ end;
  { TExtensionsList }
 
  constructor TExtensionsList.Create;
+ var
+   i,j : integer;
+   vExtensionSigMime : TExtensionSigMime;
  begin
    inherited create;
    fList := tstringlist.create;
    LoadFromJSON('extensions.json');
+   for i := 0 to fList.count-1  do
+   begin
+     vExtensionSigMime  :=  fList.Objects[i] as TExtensionSigMime;
+     for j := 0 to length(vExtensionSigMime.Sigs) - 1 do
+       AddToAllsignatures(vExtensionSigMime.Sigs[j]);
+   end;
+
    SavetoFile('debug.txt');
  end;
 
@@ -239,12 +254,15 @@ end;
    end;
    JSONText.Free;
 
+
+
  end;
 
  procedure TExtensionsList.SavetoFile(aFilename: string);
  var
-   i : integer;
+   i,j : integer;
    output : tstringlist;
+   sigstr : string;
  begin
    output := tstringlist.create;
    for i := 0 to fList.count-1  do
@@ -255,6 +273,15 @@ end;
 
 
 
+   end;
+
+   for i := 0 to length(fAllsignatures)-1  do
+   begin
+     sigstr := '';
+     for j:=0 to length(fAllsignatures[i].Signature)-1 do begin
+       sigstr := sigstr +  inttohex(fAllsignatures[i].Signature[j],2);
+     end;
+     output.Add(inttostr(fAllsignatures[i].Offset) + ',' + sigstr);
    end;
 
 
@@ -279,11 +306,11 @@ begin
   r := TestFileSigVsExtension(aFilename);
   case r of
        'ext-not-in-list': begin
-
+          result := r;
        end;
 
        'ext-not-match-sig': begin
-
+          result := r;
        end;
 
        'ext-match-sig': begin
@@ -355,6 +382,21 @@ end;
 function TestFileSigOnly(aFilename:string):string;
 
 begin
+
+end;
+
+procedure TExtensionsList.AddToAllsignatures(aSig: tSigs);
+var
+  i : integer;
+begin
+  for i := 0 to length(fAllsignatures) - 1 do begin
+    if (fAllsignatures[i].Offset = aSig.Offset) and (fAllsignatures[i].Signature = aSig.Signature) then
+      Exit;
+  end;
+  setlength(fAllsignatures,length(fAllsignatures)+1);
+  fAllsignatures[length(fAllsignatures)-1].Offset := aSig.Offset;
+  setlength(fAllsignatures[length(fAllsignatures)-1].Signature,length(aSig.Signature));
+  Move(aSig.Signature[0],fAllsignatures[length(fAllsignatures)-1].Signature[0],length(aSig.Signature));
 
 end;
 

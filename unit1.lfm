@@ -1,7 +1,7 @@
 object Form1: TForm1
-  Left = 785
+  Left = 413
   Height = 562
-  Top = 376
+  Top = 141
   Width = 938
   Caption = 'VC Hunter'
   ClientHeight = 562
@@ -82,12 +82,12 @@ object Form1: TForm1
     ClientWidth = 938
     TabOrder = 2
     object CheckBox_skipMod512odd: TCheckBox
-      Left = 496
+      Left = 369
       Height = 19
       Top = 8
-      Width = 103
+      Width = 98
       Anchors = [akTop, akRight]
-      Caption = 'modulo 512 is 0'
+      Caption = 'mod512 is odd'
       Checked = True
       State = cbChecked
       TabOrder = 0
@@ -117,9 +117,9 @@ object Form1: TForm1
       Value = 160
     end
     object Label1: TLabel
-      Left = 408
+      Left = 288
       Height = 15
-      Top = 12
+      Top = 8
       Width = 59
       Anchors = [akTop, akRight]
       Caption = 'Skip files ..'
@@ -171,8 +171,17 @@ object Form1: TForm1
       TabOrder = 4
       TabStop = False
     end
+    object CheckBox_onHeaderIgnoreList: TCheckBoxThemed
+      Left = 484
+      Height = 19
+      Top = 8
+      Width = 128
+      Anchors = [akTop, akRight]
+      Caption = 'on header ignore list'
+      TabOrder = 5
+    end
     object Label4: TLabel
-      Left = 496
+      Left = 369
       Height = 15
       Top = 40
       Width = 197
@@ -194,7 +203,7 @@ object Form1: TForm1
       Width = 108
       Anchors = [akTop, akRight]
       Caption = 'on Signature List'
-      TabOrder = 5
+      TabOrder = 6
     end
   end
   object ListBox: TListBox
@@ -239,6 +248,9 @@ object Form1: TForm1
         Caption = 'Header'
         OnClick = MenuItem_CopyHeaderClick
       end
+    end
+    object MenuItem_AddHeaderToIgnore: TMenuItem
+      Caption = 'Add header to ignore list'
     end
     object MenuItem6: TMenuItem
       Caption = 'Calculating MD5 Hash..'
