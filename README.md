@@ -1,7 +1,7 @@
 # vc_hunter
 vc_hunter is a search tool for veracrypt (truecrypt) containers that can be used to find encrypted Veracrypt or TrueCrypt containers on the system. 
 
-vc_hunter scans a select folder on the computer:
+vc_hunter scans all files in a select folder on the computer and with follow conditions:
 
 - file size is over 4kb (entropy is generated from the first 4kb of a file)
 - file size modulo 512 must equal zero
