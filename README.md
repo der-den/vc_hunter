@@ -3,8 +3,10 @@ vc_hunter is a search tool for veracrypt (truecrypt) containers that can be used
 
 vc_hunter scans a select folder on the computer for the following attributes that are part of every V/T-Crypt file:
 
-- The suspect file size modulo 512 must equal zero.
-- The suspect file contents has a high entropy.
-- The suspect file must not contain a common file header. (at time in process)
+- The suspect file size is over 4kb
+- The suspect file size modulo 512 must equal zero
+- The suspect file contents has a high entropy
+- The suspect file has a byte difference under 160 (Experimental)
+- The suspect file must not contain a common file header
 
 Status: Beta
