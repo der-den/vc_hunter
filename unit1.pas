@@ -114,7 +114,8 @@ end;
 procedure TForm1.scanDirectory(Sender: TObject);
 var
   AllFiles   : TStringList;
-  i, skipped : Integer;
+  i, skipped,
+  inList     : Integer;
   r          : TRes;
   newItem    : TListItem;
 
@@ -127,6 +128,7 @@ begin
       cancelSearch:=false;
       searchRunning:=true;
       skipped := 0;
+      inList  := 0;
 
       AllFiles := TStringList.Create;
       try
@@ -147,17 +149,11 @@ begin
            begin
               if ( i mod 10 = 0 ) then begin
 
-               StatusBar.SimpleText:=' Total: '+IntToStr(AllFiles.Count)+', Processed: '+IntToStr(i+1)+', Skipped: '+IntToStr(skipped) + ', Time: ' +Inttostr(gettickcount - starttimer) + ' ms';
+               StatusBar.SimpleText:=' Total: '+IntToStr(AllFiles.Count)+', Processed: '+IntToStr(i+1)+', Skipped: '+IntToStr(skipped) + ', Listed: '+IntToStr(inList)+' Time: ' +Inttostr(gettickcount - starttimer) + ' ms';
                Application.ProcessMessages;
               end;
 
-              {
-              if (CheckBox_skipSizeUnder292.Checked) AND (FileSize(AllFiles[i]) < 299008) then      // skip under 292kb
-              begin
-                 inc(skipped);
-                 Continue;
-              end;
-              }
+
               if CheckBox_skipMod512odd.Checked AND ((FileSize(AllFiles[i]) mod 512) <> 0) then         // skip mod512 <> 0
               begin
                  inc(skipped);
@@ -165,7 +161,7 @@ begin
               end;
 
 
-              r := calcByteDivAndShannonEntropyFromFile(AllFiles[i]);
+              r := calcByteDivAndShannonEntropyFromFile(AllFiles[i]);                                   // shannon of first 4k
 
               if r.shannon_entropy < FloatSpinEdit_se_limit.Value then
               begin
@@ -187,6 +183,7 @@ begin
 
               // okay, no more skipping features, add to list:
 
+              inc(inList);
               newItem := ListView.Items.Add;
               newItem.Caption := ExtractFileDir(AllFiles[i]);                   // 1 - filename
               newItem.SubItems.Add(ExtractFileName(AllFiles[i]));               // 2 (sub 0) - Path
