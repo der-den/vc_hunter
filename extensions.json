@@ -1,9 +1,10 @@
 {
 	"win": {
 		"signs": [
-			"0,4443530101000000"
+			"0,4443530101000000",
+			"0,4443530102000000"
 	],
-		"mime": "application/windows"
+		"mime": "application/windows-internal"
 	},
     "123": {
         "signs": [

@@ -334,34 +334,29 @@ begin
   r := TestFileSigVsExtension(aFilename);
 
   case r of
-       'ext-not-in-list': begin
-          result := r;
-       end;
-
-       'ext-not-match-sig': begin
-          result := r;
-       end;
-
        'ext-match-sig': begin
           result := r;
+          exit;
        end;
-  end;
 
-  r := TestFileSigOnly(aFilename);
-   case r of
+       'ext-not-match-sig',
        'ext-not-in-list': begin
-          result := r;
-       end;
+          r := TestFileSigOnly(aFilename);
 
-       'ext-not-match-sig': begin
-          result := r;
-       end;
+          case r of
+            'sig-match': begin
+               result := r;
+            end;
 
-       'ext-match-sig': begin
-          result := r;
+            'sig-not-match': begin
+               result := r;
+            end;
+          end;
+
        end;
   end;
 end;
+
 
 function TestFileSigVsExtension(aFilename: string): string;
 var
@@ -444,13 +439,13 @@ begin
 
     if (vBytesRead >= vLen) and CompareMem(@vReadbuffer[0],@ExtensionsList.fAllsignatures[i].Signature[0],vLen) then
     begin
-      result := 'match-sig';
+      result := 'sig-match';
       fs.free;
       exit;
     end;
   end;
   fs.free;
-  result:='not-match-sig';
+  result:='sig-not-match';
 end;
 
 procedure TExtensionsList.AddToAllsignatures(aSig: tSigs);

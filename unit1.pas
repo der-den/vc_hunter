@@ -118,6 +118,7 @@ var
   inList     : Integer;
   r          : TRes;
   newItem    : TListItem;
+  sigCheckResult : String;
 
 begin
   if SelectDirectoryDialog1.Execute then
@@ -175,7 +176,8 @@ begin
                  Continue;
               end;
 
-              if CheckBox_onSignatureList.Checked and (TestFile(AllFiles[i]) = 'ext-match-sig' )then
+              sigCheckResult := TestFile(AllFiles[i]);
+              if CheckBox_onSignatureList.Checked and ( (sigCheckResult = 'ext-match-sig') OR (sigCheckResult = 'sig-match') )then
               begin
                 inc(skipped);
                 Continue;
@@ -192,6 +194,8 @@ begin
               newItem.SubItems.Add(FloatToStr(r.shannon_entropy));              // 5 (sub 3) - Entropy
               newItem.SubItems.Add(r.headerString);                             // 6 (sub 4) - Header String
                                                                                 // 7 (sub 5) - Hash
+              // Debug: newItem.SubItems.Add(sigCheckResult);
+
            end else inc(skipped);
 
         end;
