@@ -325,9 +325,11 @@ begin
   end;
 end;
 
+
+
 function TestFile(aFilename: string):string;
 var
-  r : string[20];
+  r : string[30];
 begin
   r := TestFileSigVsExtension(aFilename);
 

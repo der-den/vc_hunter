@@ -149,7 +149,7 @@ begin
            begin
               if ( i mod 10 = 0 ) then begin
 
-               StatusBar.SimpleText:=' Total: '+IntToStr(AllFiles.Count)+', Processed: '+IntToStr(i+1)+', Skipped: '+IntToStr(skipped) + ', Listed: '+IntToStr(inList)+' Time: ' +Inttostr(gettickcount - starttimer) + ' ms';
+               StatusBar.SimpleText:=' Total: '+IntToStr(AllFiles.Count)+', Processed: '+IntToStr(i+1)+', Skipped: '+IntToStr(skipped) + ', Listed: '+IntToStr(inList)+', Time: ' +Inttostr(gettickcount - starttimer) + ' ms';
                Application.ProcessMessages;
               end;
 
@@ -198,7 +198,7 @@ begin
 //        StatusBar.SimpleText:='';
       finally
       end;
-      StatusBar.SimpleText:=' Total: '+IntToStr(AllFiles.Count)+', Processed: '+IntToStr(i+1)+', Skipped: '+IntToStr(skipped) + ', Time: ' +Inttostr(gettickcount - starttimer) + ' ms';
+      StatusBar.SimpleText:=' Total: '+IntToStr(AllFiles.Count)+', Processed: '+IntToStr(i+1)+', Skipped: '+IntToStr(skipped) + ', Listed: '+IntToStr(inList) + ', Time: ' +Inttostr(gettickcount - starttimer) + ' ms';
       Application.ProcessMessages;
       Button_cancelSearch.Visible:=false;
       Button_scanDirectory.Visible:=true;
