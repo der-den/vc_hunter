@@ -147,11 +147,13 @@ end;
  var
    i,j : integer;
    vExtensionSigMime : TExtensionSigMime;
+   fPath : string;
  begin
    inherited create;
    fSignaltureMaxlen := 0;
    fList := tstringlist.create;
-   LoadFromJSON('extensions.json');
+   fPath := ExtractFilePath(Paramstr(0));  // PathDelim
+   LoadFromJSON(fPath+'extensions.json');
    for i := 0 to fList.count-1  do
    begin
      vExtensionSigMime  :=  fList.Objects[i] as TExtensionSigMime;
@@ -163,7 +165,7 @@ end;
      end;
    end;
    SortAllsignatures();
-   SavetoFile('debug.txt');
+   // SavetoFile('debug.txt');
  end;
 
  destructor TExtensionsList.Destroy;
@@ -363,12 +365,11 @@ var
   vExtension : string;
   vIndex : integer;
   fs : TFilestream;
-  i,j : integer;
+  i : integer;
   vExtensionSigMime : TExtensionSigMime;
   vReadbuffer : array [0..255] of byte;
   vBytesCount : integer;
   vBytesRead : integer;
-  vComparedBytes : integer;
 begin
   vExtension := ExtractFileExt(aFilename);
   delete(vExtension,1,1);
