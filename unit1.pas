@@ -283,14 +283,18 @@ var
   i : integer;
 
 begin
-  if( ListView.Items.Count > -1 ) then
+  if( ListView.Items.Count > 0 ) then
   begin
      TSVlist := TStringlist.Create;
+     Item := TListItem.Create(nil);
+
 
        for i:=0 to ListView.Items.Count-1 do
        begin
+
          Item := ListView.Items[i];
-         TSVList.Add(Item.Caption+#09+Item.SubItems[0]+#09+Item.SubItems[1]+#09+Item.SubItems[2]+#09+Item.SubItems[3]+#09+Item.SubItems[4]+#09+Item.SubItems[5]);
+         TSVList.Add(Item.Caption+#09+Item.SubItems[0]+#09+Item.SubItems[1]+#09+Item.SubItems[2]+#09+Item.SubItems[3]+#09+Item.SubItems[4]);
+//         +#09+Item.SubItems[5]
        end;
      if SaveDialog.Execute then
      begin

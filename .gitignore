@@ -21,3 +21,6 @@ backup/ufilesig.pas
 backup/unit2.lfm
 backup/unit2.pas
 *.7z
+backup/project1.lpr
+vc_hunter.dbg
+*.zip
