@@ -6,7 +6,7 @@
     <General>
       <SessionStorage Value="InProjectDir"/>
       <MainUnit Value="0"/>
-      <Title Value="VC Hunter"/>
+      <Title Value="vc_hunter"/>
       <Scaled Value="True"/>
       <ResourceType Value="res"/>
       <UseXPManifest Value="True"/>
@@ -15,8 +15,9 @@
     <VersionInfo>
       <UseVersionInfo Value="True"/>
       <AutoIncrementBuild Value="True"/>
-      <BuildNr Value="3"/>
-      <StringTable CompanyName="d-forensik.de"/>
+      <MinorVersionNr Value="1"/>
+      <BuildNr Value="4"/>
+      <StringTable CompanyName="d-forensik.de" FileDescription="search tool for veracrypt (truecrypt) containers"/>
     </VersionInfo>
     <BuildModes Count="3">
       <Item1 Name="Default" Default="True"/>

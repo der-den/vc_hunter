@@ -13,7 +13,7 @@ uses
 
 begin
   Application.Scaled:=True;
-  Application.Title:='VC Hunter';
+  Application.Title:='vc_hunter';
   RequireDerivedFormResource:=True;
   Application.Initialize;
   Application.CreateForm(TForm1, Form1);
